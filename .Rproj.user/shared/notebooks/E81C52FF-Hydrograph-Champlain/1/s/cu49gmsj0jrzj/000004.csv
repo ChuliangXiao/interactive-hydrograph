@@ -1,0 +1,3 @@
+"0","pnt             <- read.csv(""P:/ipemf/wrf/Champlain/RMD/Station_Champlain.csv"")"
+"0","pnt$NAME        <- paste0(""0"", pnt$NAME)"
+"0","pnt$Avail       <- FALSE"
