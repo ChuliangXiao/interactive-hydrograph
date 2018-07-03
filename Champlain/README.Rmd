@@ -1,0 +1,49 @@
+### Interactive Hydrogrphy powered by [`mapview` popup](http://environmentalinformatics-marburg.github.io/mapview/popups/html/popups.html)   
+
+
+This document was produced on _`r format(Sys.time(), "%a %b %d %Y")`_ using **mapview** version **`r packageVersion("mapview")`**
+* There are three `sp` objects.  
+    + **SpatialPointsDataFrame** `pnt` from a csv file   
+    + **SpatialPolygonsDataFrame** `rBasin.proj` and `rBasin.proj` from shapfiles   
+
+----
+```
+> pnt
+class       : SpatialPointsDataFrame 
+features    : 31 
+extent      : -73.6425, -72.38539, 43.46389, 45.00282  (xmin, xmax, ymin, ymax)
+coord. ref. : +init=epsg:4326 +proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0 
+variables   : 6
+names       : FID,                                STATION,     NAME, HOST,    ELEV, Avail 
+min values  :   1,   AUSABLE RIVER NEAR AU SABLE FORKS NY, 04271500, USGS,  106.90,  TRUE 
+max values  :  42, WINOOSKI RIVER NEAR ESSEX JUNCTION, VT, 04294300, USGS, 1240.00,  TRUE 
+```
+-----    
+```
+> rBasin.proj
+class       : SpatialPolygonsDataFrame 
+features    : 1 
+extent      : -74.46275, -72.16594, 43.24033, 46.04764  (xmin, xmax, ymin, ymax)
+coord. ref. : +init=epsg:4326 +proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0 
+variables   : 19
+names       :                                  TNMID, MetaSource, SourceData, SourceOrig, SourceFeat,   LoadDate, GNIS_ID, AreaAcres, AreaSqKm,   States,   HUC6,                           Name, Shape_Leng, Shape_Area, InPoly_FID, ... 
+value       : {178579E9-B694-4B7A-97C4-663771641627},         NA,         NA,         NA,         NA, 2017/02/15,       0,   5879580, 23793.84, CN,NY,VT, 041504, Lake Champlain-Richelieu River,    16.0489,   2.690553,          2, ... 
+```
+    
+You can add mutiple layers 
+```r
+mapview(pnt, label = pnt$NAME, layer.name = "Hydrographs", 
+        popup = popupImage(img, src = "remote"), cex = 5) +
+  mapview(rBasin.proj, layer.name = "Watershed", fill = F) +
+  mapview(rLake.proj, layer.name = "Lake", fill = F)
+```
+* Available on **RPbus**  
+   http://rpubs.com/cxiao/Champlain-Hydrograph 
+   
+* Screenshot  
+
+![](https://raw.githubusercontent.com/ChuliangXiao/interactive-hydrograph/master/Champlain/mapview.png)   
+
+
+![](https://raw.githubusercontent.com/ChuliangXiao/interactive-hydrograph/master/Champlain/mapview-popup.png)  
+

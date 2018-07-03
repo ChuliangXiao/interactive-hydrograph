@@ -1,0 +1,81 @@
+---
+title: "mapview with hydrogrphy popups"
+---
+
+```{r set-options, echo=FALSE, cache=FALSE}
+options(width = 10)
+```
+
+```{r setup, include=FALSE}
+#knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(fig.width = 9.5, message = FALSE)
+```
+
+```{r message = F, resutls = "hide", warning = F}
+library(tidyverse)
+library(mapview)
+library(sp)
+library(lattice)
+```
+
+### Load stations
+```{r warning = F}
+gUS             <- read.csv("P:\\ipemf\\wrf\\NWM_GL\\RMD\\Station_US.csv")
+gCA             <- read.csv("P:\\ipemf\\wrf\\NWM_GL\\RMD\\Station_CA.csv")
+gUS$County      <- "USGS"
+gUS$Station       <- paste0("0", gUS$Station)
+gCA$County      <- "ECCC"
+
+  
+pnt             <- rbind(gUS, gCA)
+colnames(pnt)[2]<- "gages"
+pnt$Avail       <- FALSE
+
+```
+### Load hydrographs
+*somehow local images cannot be popuped by mapview*
+```{r}
+#img   <- character(npnt)
+rpnt  <- nrow(pnt)
+for (i in 1 : rpnt) {
+  if(pnt$County[i] == "USGS"){
+    filename <- paste0("P:\\ipemf\\wrf\\NWM_GL\\Precip\\US/Hydrograpy_MAP_Stream_", pnt$gages[i], ".png")
+  } else{
+    filename <- paste0("P:\\ipemf\\wrf\\NWM_GL\\Precip\\CA/Hydrograpy_MAP_Stream_", pnt$gages[i], ".png")
+  }
+  if (file.exists(filename)){
+    pnt$Avail[i] <- TRUE
+  }
+}
+
+pnt <- pnt[pnt$Avail, ]
+npnt  <- nrow(pnt)
+img <- paste0("http://www-personal.umich.edu/~cxiao/NWM_GL_Hydrograph/Hydrograpy_MAP_Stream_", 
+              pnt$gages, ".png")
+
+```
+### Spatial points
+```{r}
+coordinates(pnt) <- ~ Lon + Lat
+proj4string(pnt) <- "+init=epsg:4326"
+
+```
+
+#### Add the Great Lakes watershed polygon
+```{r message = F, resutls = "hide", warning = F}
+library(rgdal)
+rMaumee       <- readOGR(dsn = "P:\\ipemf\\wrf\\NWM_GL\\RMD\\glin_glwatershed_outline", 
+                         layer = "glwatershed_outline")
+rMaumee.proj  <- spTransform(rMaumee, CRSobj = CRS(proj4string(pnt)))
+```
+
+### Draw plot
+```{r}
+mapview(pnt, zcol = "County", label = pnt$gages, layer.name = "Hydrographs", 
+        popup = popupImage(img, src = "remote"), cex = 5) +
+  mapview(rMaumee.proj, layer.name = "Watershed")
+```
+
+#### Use different colors to differenciate stations with and without hydrographs
+
+#### Change the popup Image size

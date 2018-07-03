@@ -1,0 +1,13 @@
+---
+output:
+  md_document:
+    variant: markdown_github
+---
+
+### Interactive Hydrogrphy powered by [`mapview` popup](http://environmentalinformatics-marburg.github.io/mapview/popups/html/popups.html)   
+
+
+This document was produced on _`r format(Sys.time(), "%a %b %d %Y")`_ using **mapview** version **`r packageVersion("mapview")`**
+
+* Available on **RPbus**  
+   http://rpubs.com/cxiao/mapview-hydrograph
